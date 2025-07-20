@@ -11,6 +11,7 @@ import { BattlePanel } from './BattlePanel';
 import { InventoryPanel } from './InventoryPanel';
 import { CreateCharacterModal } from './CreateCharacterModal';
 import { QuestBattle } from '../game/QuestBattle';
+import { QuickBattle } from '../game/QuickBattle';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -32,6 +33,7 @@ export const Dashboard: React.FC = () => {
   
   const [showCreateCharacter, setShowCreateCharacter] = useState(false);
   const [activeQuest, setActiveQuest] = useState<any>(null);
+  const [showQuickBattle, setShowQuickBattle] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -135,6 +137,23 @@ export const Dashboard: React.FC = () => {
     setActiveQuest(null);
   };
 
+  const handleQuickBattle = () => {
+    if (!selectedCharacter) {
+      toast.error('Please select a character first');
+      return;
+    }
+    setShowQuickBattle(true);
+  };
+
+  const handleQuickBattleComplete = () => {
+    setShowQuickBattle(false);
+    fetchGameData(); // Refresh data after battle
+    toast.success('Battle completed!');
+  };
+
+  const handleQuickBattleExit = () => {
+    setShowQuickBattle(false);
+  };
   if (!user || !profile) {
     return null;
   }
@@ -150,6 +169,15 @@ export const Dashboard: React.FC = () => {
     );
   }
 
+  // Show quick battle if active
+  if (showQuickBattle) {
+    return (
+      <QuickBattle
+        onComplete={handleQuickBattleComplete}
+        onExit={handleQuickBattleExit}
+      />
+    );
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/7078705/pexels-photo-7078705.jpeg')] bg-cover bg-center opacity-5" />
@@ -175,7 +203,7 @@ export const Dashboard: React.FC = () => {
             >
               <CharacterPanel onCreateCharacter={() => setShowCreateCharacter(true)} />
               <QuestPanel onStartQuest={handleStartQuest} />
-              <BattlePanel />
+              <BattlePanel onQuickBattle={handleQuickBattle} />
             </motion.div>
 
             <motion.div

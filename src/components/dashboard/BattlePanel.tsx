@@ -3,13 +3,16 @@ import { motion } from 'framer-motion';
 import { Swords, Trophy, Clock, User, Crown, Zap } from 'lucide-react';
 import { useGameStore } from '../../store/useGameStore';
 
-export const BattlePanel: React.FC = () => {
+interface BattlePanelProps {
+  onQuickBattle: () => void;
+}
+
+export const BattlePanel: React.FC<BattlePanelProps> = ({ onQuickBattle }) => {
   const { battles, selectedCharacter, profile } = useGameStore();
 
   const handleQuickBattle = () => {
     if (!selectedCharacter) return;
-    // TODO: Implement quick battle logic
-    console.log('Starting quick battle with character:', selectedCharacter.id);
+    onQuickBattle();
   };
 
   const formatDate = (dateString: string) => {
